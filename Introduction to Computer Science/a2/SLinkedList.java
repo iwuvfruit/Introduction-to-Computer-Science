@@ -228,10 +228,10 @@ public class SLinkedList<E extends DeepClone<E>> implements Iterable<E>
  		/**** ADD CODE HERE ****/
  		SLinkedList<E> newList = new SLinkedList<E>();
  		for(E e: this) {
- 			newList.addLast(e.deepClone());
+ 			newList.addLast(e.deepClone()); //recursion. runtime is O(n)
  		}
  		return newList;
- 	}
+ 		}
  	
  	@Override
     public String toString()

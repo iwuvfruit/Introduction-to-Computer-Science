@@ -45,6 +45,25 @@ public class Polynomial
 			// Example: System.out.println(currentTerm.getExponent()) should print the exponents of each term in the polynomial when it is not empty.  
 		}
 		*/
+		int index = 0;
+		for(Term currentTerm: polynomial) {
+			int exp = currentTerm.getExponent();
+			BigInteger coeff = currentTerm.getCoefficient();
+			if(exp == t.getExponent()) {
+				currentTerm.setCoefficient(coeff.add(t.getCoefficient()));
+				if(currentTerm.getCoefficient().intValue() == 0) {
+					polynomial.remove(index);
+				}
+			}
+			if(t.getExponent() > exp) {
+				polynomial.add(index, t);
+			}
+			index++;
+		}
+		polynomial.addLast(t);
+		//runtime is O(n)
+		
+		
 	}
 	
 	public Term getTerm(int index)
@@ -53,26 +72,41 @@ public class Polynomial
 	}
 	
 	//TODO: Add two polynomial without modifying either
+	//O(n + n) 
 	public static Polynomial add(Polynomial p1, Polynomial p2)
 	{
 		/**** ADD CODE HERE ****/
 		
-		return null;
+		Polynomial result = p1.deepClone();
+		for(Term t: p2.polynomial) {
+			result.addTerm(t);
+		}
+		return result;
 	}
+	
 	
 	//TODO: multiply this polynomial by a given term.
 	private void multiplyTerm(Term t)
 	{	
 		/**** ADD CODE HERE ****/
 		
+		for(Term term: polynomial) {
+			int exp = term.getExponent()+t.getExponent();
+			term.setExponent(exp);
+			term.setCoefficient(term.getCoefficient().multiply(t.getCoefficient()));
+		}
 	}
 	
 	//TODO: multiply two polynomials
 	public static Polynomial multiply(Polynomial p1, Polynomial p2)
 	{
 		/**** ADD CODE HERE ****/
-		
-		return null;
+		Polynomial result = p1.deepClone();
+		for(Term t : p2.polynomial) {
+			result.multiplyTerm(t);
+		}
+	
+		return result;
 	}
 	
 	//TODO: evaluate this polynomial.
@@ -87,7 +121,16 @@ public class Polynomial
 	public BigInteger eval(BigInteger x)
 	{
 		/**** ADD CODE HERE ****/
-		return new BigInteger("0");
+		BigInteger result = null;
+		for(Term term: polynomial) {
+			if(result == null) {
+				result = x.pow(term.getExponent()).multiply(term.getCoefficient());
+			}
+			else {
+				result = result.add((x.pow(term.getExponent())).multiply(term.getCoefficient()));
+			}
+		}
+		return result==null? new BigInteger("0"): result;
 	}
 	
 	// Checks if this polynomial is same as the polynomial in the argument
