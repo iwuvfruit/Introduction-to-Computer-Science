@@ -214,6 +214,7 @@ public class SLinkedList<E extends DeepClone<E>> implements Iterable<E>
 		System.out.println("  (size is " + size + " )");
 	}
 	
+	
 	public int size()
 	{
 		return size;

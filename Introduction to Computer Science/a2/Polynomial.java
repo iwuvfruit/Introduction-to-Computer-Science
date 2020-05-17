@@ -133,6 +133,7 @@ public class Polynomial
 		return result==null? new BigInteger("0"): result;
 	}
 	
+	
 	// Checks if this polynomial is same as the polynomial in the argument
 	public boolean checkEqual(Polynomial p)
 	{	
