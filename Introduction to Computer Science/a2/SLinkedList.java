@@ -228,7 +228,7 @@ public class SLinkedList<E extends DeepClone<E>> implements Iterable<E>
  		/**** ADD CODE HERE ****/
  		SLinkedList<E> newList = new SLinkedList<E>();
  		for(E e: this) {
- 			newList.addLast(e);
+ 			newList.addLast(e.deepClone());
  		}
  		return newList;
  	}
