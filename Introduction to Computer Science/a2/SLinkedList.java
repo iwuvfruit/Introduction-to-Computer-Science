@@ -226,8 +226,11 @@ public class SLinkedList<E extends DeepClone<E>> implements Iterable<E>
  	public SLinkedList<E> deepClone()
  	{
  		/**** ADD CODE HERE ****/
- 		
- 		return null;
+ 		SLinkedList<E> newList = new SLinkedList<E>();
+ 		for(E e: this) {
+ 			newList.addLast(e);
+ 		}
+ 		return newList;
  	}
  	
  	@Override
