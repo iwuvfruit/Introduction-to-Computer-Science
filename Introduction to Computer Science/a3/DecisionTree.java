@@ -40,9 +40,98 @@ public class DecisionTree implements Serializable {
 		DTNode fillDTNode(ArrayList<Datum> datalist) {
 
 			//YOUR CODE HERE
+			boolean sameLabel = true;
+			if(datalist.size() > minSizeDatalist ) {
+				for(Datum d: datalist) {
+					if(!(d.y == datalist.get(0).y)) {
+						sameLabel = false;
+						break;
+					}
+				}
+				//true
+				if(sameLabel) {
+					DTNode new_node = new DTNode();
+					new_node.label = datalist.get(0).y;
+					return new_node;
+				}
+				//false
+				else {
+					//we have to find a split 
+					//we need the best threshold and the best 
+					double[] bestArray = bestSplit(datalist);
+					int bestAttribute = (int) bestArray[0];
+					double bestThreshold = bestArray[1];
+					
+					
+					DTNode new_Node = new DTNode();
+					new_Node.attribute = bestAttribute;
+					new_Node.threshold = bestThreshold;
+		
+					
+					ArrayList<Datum> left = new ArrayList<Datum>();
+					ArrayList<Datum> right = new ArrayList<Datum>();
+					
+					for(Datum data : datalist) {
+						if(data.x[bestAttribute] < bestThreshold) {
+							left.add(data);
+						}
+						else {
+							right.add(data);
+						}
+					}
+					new_Node.left = fillDTNode(left);
+					new_Node.right = fillDTNode(right);
+					return new_Node;
+				}
+			}
+			else {
+				//if dataSet not big enough (k too small), just create a leaf on the spot with the majority of nodes
+                DTNode newDTNoder = new DTNode();
+                newDTNoder.label = findMajority(datalist);
+                return newDTNoder;
 
+			}
+		}
+		public double[] bestSplit(ArrayList<Datum> datalist) {
+			double[] array = new double[2];
+			double best_avg_entropy = Double.MAX_VALUE;
+			double best_attr = -1;
+			double best_threshold = -1;
+			for(int i = 0; i< 2; i++) {
+				for(int a = 0; a < datalist.size(); a++) {
+					//compute split
+					ArrayList<Datum> left = new ArrayList<Datum>();
+					ArrayList<Datum> right = new ArrayList<Datum>();
+					
+					for(int b = 0; b <datalist.size(); b++) {
+						if(datalist.get(a).x[i] > datalist.get(b).x[i]) {
+							left.add(datalist.get(b));
+						}
+						else {
+							right.add(datalist.get(a));
+						}
+					}
+					double left_entropy = calcEntropy(left);
+					double right_entropy = calcEntropy(right);
+					//H(D,D) = w * H(D) + w *H(D)
+					//w = number of datapoints in Di / number of datapoints in D, namely D1 + D2
+					double current_avg_entropy = left_entropy * (left.size()/datalist.size()) +
+							right_entropy * (right.size()/datalist.size());
+					
+					if(best_avg_entropy > current_avg_entropy ) {
+						best_avg_entropy = current_avg_entropy;
+                        best_attr = i;
+						best_threshold = datalist.get(a).x[i];
+
+
+					}
+				}
 				
-			return this;
+			}
+			array[0] = best_attr;
+			array[1] = best_threshold;
+			return array;
+			
 		}
 
 
@@ -80,8 +169,18 @@ public class DecisionTree implements Serializable {
 		// returns its corresponding label, as determined by the decision tree
 		int classifyAtNode(double[] xQuery) {
 			//YOUR CODE HERE
-
-			return -1; //dummy code.  Update while completing the assignment.
+			if(this.leaf ) {
+				return  this.label;
+			}
+			else {
+				if(xQuery[this.attribute] < this.threshold) {
+					return this.left.classifyAtNode(xQuery);
+					
+				}
+				else {
+					return this.right.classifyAtNode(xQuery);
+				}
+			}
 		}
 
 
@@ -89,11 +188,30 @@ public class DecisionTree implements Serializable {
 		//at DTNode object passed as the parameter
 		public boolean equals(Object dt2)
 		{
-
 			//YOUR CODE HERE
-
-
+			//node - root, left, right 
+			//leaf node - the labels should be the same
+			//internal node: the thresholds, attributes should be same 
+			//traversal (recursion) 
+			boolean rootEqual = false;
+			boolean leftEqual = false;
+			boolean rightEqual = false;
+			if(this != null && dt2 != null) {
+				if(this.leaf && ((DTNode)dt2).leaf) {
+					if(this.label == ((DTNode)dt2).label) {
+						return true;
+					}
+				}
+				else { 
+					rootEqual = (this.threshold == ((DTNode)dt2).threshold) && (this.attribute == ((DTNode)dt2).attribute);
+					leftEqual = this.left.equals(((DTNode)dt2).left);
+					rightEqual = this.right.equals(((DTNode)dt2).right);
+				}
+				return  (rootEqual&&leftEqual&&rightEqual);
+			}
 			return false;
+		
+
 		}
 	}
 
