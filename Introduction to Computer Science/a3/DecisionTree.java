@@ -165,10 +165,15 @@ public class DecisionTree implements Serializable {
 
 
 
-		// This method takes in a datapoint (excluding the label) in the form of an array of type double (Datum.x) and
-		// returns its corresponding label, as determined by the decision tree
+		
 		int classifyAtNode(double[] xQuery) {
+			//once we have a decision tree, you can use it to classify new objects, called the testing phase.
+			//We will use the decision tree to choose a label for the object
+			//This is done by traversing the decision tree from the root to a leaf
 			//YOUR CODE HERE
+			
+			//xQuery is a datapoint excluding the labels in the forms of an array of type double Datum.x
+			//should return corresponding label
 			if(this.leaf ) {
 				return  this.label;
 			}
