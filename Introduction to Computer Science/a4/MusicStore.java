@@ -4,13 +4,19 @@ import java.util.ArrayList;
 
 public class MusicStore {
     //ADD YOUR CODE BELOW HERE
-    
+    MyHashTable<String, ArrayList<Song>> songTitleHash;
+    MyHashTable<String, ArrayList<Song>> songArtistHash;
+    MyHashTable<Integer, ArrayList<Song>> songYearHash;
     //ADD YOUR CODE ABOVE HERE
     
     
     public MusicStore(ArrayList<Song> songs) {
         //ADD YOUR CODE BELOW HERE
+    	this.songTitleHash = new MyHashTable<>(100);
+        this.songArtistHash = new MyHashTable<>(100);
+        this.songYearHash = new MyHashTable<>(100);
         
+       
         //ADD YOUR CODE ABOVE HERE
     }
     
