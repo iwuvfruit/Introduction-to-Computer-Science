@@ -1,119 +1,113 @@
+import java.util.List;
 
 public class Basket {
 	private MarketProduct[] basket;
-	public Basket () {
-		this.basket = null;
+	public Basket() {
+		this.basket = new MarketProduct[0];
 	}
 	public MarketProduct[] getProducts() {
-		
-//		MarketProduct[] newArray = this.basket.clone();
-		//we want (Not a copy of the references so shouldn't use clone())
-		MarketProduct[] newBasket = new MarketProduct[this.basket.length];
-		for(int i = 0; i < this.basket.length; i++) {
-			newBasket[i] = this.basket[i];
+		MarketProduct[] products = new MarketProduct[basket.length];
+		for(int i = 0; i < basket.length; i++) {
+			products[i] = basket[i];
 		}
-		return newBasket;
-		}
+		return products;
+	}
 	public void add(MarketProduct product) {
-		if(this.basket == null) {
+		//add the product at the end of the list of this basket
+		//so the basket is array, it's saying create a new basket??
+		//terrible code. why cant i use list and add there in the first place
+//		List<MarketProduct> basket = new ArrayList<>();
+//		basket.add(product); 
+		if(this.basket.length == 0) {
 			MarketProduct[] basket = new MarketProduct[1];
 			basket[0] = product;
+		}else {
+			//we override basket here
+			MarketProduct[] basket = new MarketProduct[this.basket.length+1];
+			basket[basket.length-1] = product;
+			//not sure if this line is required here 
+			this.basket = basket;
 		}
-		else {
-			MarketProduct[] basket = new MarketProduct[this.basket.length + 1];
-			for(int i = 0; i <this.basket.length; i++) {
-				basket[i] = this.basket[i];
-			}
-			basket[this.basket.length] = product;
+	}
+	public boolean remove(MarketProduct product) {
+		if(product.equals(null)) {
+			return true;
 		}
 		
-	}
-	public boolean remove(MarketProduct target) {
-		int index = 0;
-		MarketProduct[] basket =new MarketProduct[this.basket.length-1];
-		for(int i = 0; i <= this.basket.length; i++) {
-			if((this.basket[i]).equals(target)) {
-				index = i;
+		for(int i = 0; i < this.basket.length; i++) {
+			if(basket[i].equals(product)) {
+				MarketProduct[] basket2 = new MarketProduct[this.basket.length-1];
+				this.basket = removeArray(basket2, i);
+				return true;
 			}
-			break;
 		}
-		if(index == 0) {
-			return false;
-		}
-		for(int i = 0; i < index; i++) {
-			basket[i] = this.basket[i];
-		}
-		for(int i = index+1; i<this.basket.length; i++) {
-			basket[i] = this.basket[i+1];
-		}
-		return true;
+		return false;
 	}
+	public MarketProduct[] removeArray(MarketProduct[] baskett, int index) {
+		int count = 0;
+		for(int i = 0; i < this.basket.length; i++) {
+			if(i != index) {
+				baskett[count] = this.basket[i];
+				count +=1;
+			}
+		}
+		return baskett;
+		
+	}
+	
 	public void clear() {
-		this.basket = null;
+		this.basket = new MarketProduct[0];
 	}
 	public int getNumOfProducts() {
-		int count = 0;
-		for(int i = 0; i <this.basket.length; i++) {
-			if(this.basket[i] != null) {
-				count ++;
-			}
-		}
-		return count;
+		return basket.length;
 	}
 	public int getSubTotal() {
-		int cost = 0;
-		for(int i = 0; i <this.basket.length; i++) {
-			cost += this.basket[i].getCost();
+		int total = 0;
+		for(int i = 0; i < this.basket.length; i++) {
+			total += this.basket[i].getCost();
 		}
-		return cost;
+		return total;
 	}
 	public int getTotalTax() {
-		int taxCost = 0;
-		for(int i = 0; i <this.basket.length; i++) {
-			if(this.basket[i] instanceof Jam) {
-				taxCost = (int) (this.basket[i].getCost() * 0.15);
+		int taxTotal = 0;
+		for(int i = 0; i < this.basket.length; i++) {
+			if(!(this.basket[i] instanceof Egg || this.basket[i] instanceof Fruit)) {
+				taxTotal =(int)(this.basket[i].getCost() * 0.15);
+				return taxTotal;
 			}
 		}
-		return taxCost;
+		return 0;
 	}
-	
 	public int getTotalCost() {
-		int totalCost = this.getSubTotal() - this.getTotalCost();
-		return totalCost;
+		return this.getSubTotal() - this.getTotalTax();
 	}
-	
 	public String toString() {
-		String productLine = " ";
-		for(int i = 0; i <this.basket.length; i++) {
-			String productName = this.basket[i].getName();
-			int price = this.basket[i].getCost();
-			String dollar = dollorConverter(price);
-			productLine = productName +"\t" + dollar + "\n";
+		String productLine = "\n";
+		for(int i = 0; i < basket.length; i++) {
+			String name = basket[i].getName();
+			int cost = basket[i].getCost();
+			String charge = dollarConversion(cost);
+			productLine += (name + "\t" + charge);
 		}
-		int subTotalInCents = this.getSubTotal();
-		String subTotal = dollorConverter(subTotalInCents);
-		int taxTotalInCents = this.getTotalTax();
-		String totalTax = dollorConverter(taxTotalInCents);
-		int totalCostInCents = this.getTotalCost();
-		String totalCost = dollorConverter(totalCostInCents);
+		productLine += "\n\n";
+		String subTotal = dollarConversion(this.getSubTotal());
+		String totalTax = dollarConversion(this.getTotalTax());
+		String totalCost = dollarConversion(this.getTotalCost());
+		productLine += ("Subtotal" + "\t" +subTotal + "\n" + "Total Tax" + "\t" + totalTax);
+		productLine += "\n";
+		productLine += ("Total Cost" + "\t" + totalCost);
 		
-		productLine += "Subtotal" + "\t" + subTotal + "\n" + "Total Tax" + "\t" + totalTax + "\n\n" + 
-		"Total Cost" + "\t" + totalCost;
 		return productLine;
 		
-		
 	}
-	public String dollorConverter(int price) {
-//		String strDouble = String.format("%.2f", 1.23456);
-		if(price < 0) {
+	public String dollarConversion(int cost) {
+		String x ="";
+		if(cost <= 0) {
 			return "-";
 		}
-		double x = price / 100;
-		String dollor = String.format("%.2f", x);
-		return dollor;
-
+		else {
+			double dollar = cost / 100.0;
+			return x+dollar;
+		}
 	}
-	
-	
-
 }
